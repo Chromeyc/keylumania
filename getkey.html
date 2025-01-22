@@ -46,10 +46,20 @@
     <script>
         async function fetchKey() {
             const urlParams = new URLSearchParams(window.location.search);
-            const hash = urlParams.get('hash');
+            // Get the last hash parameter if multiple are provided
+            const hashParams = urlParams.getAll('hash');
+            const hash = hashParams[hashParams.length - 1];
             
+            if (!hash) {
+                document.getElementById('keyDisplay').textContent = 'Invalid URL parameters';
+                return;
+            }
+
             try {
-                const response = await fetch(`/api/getkey?hash=${hash}`);
+                const response = await fetch(`/api/getkey?hash=${encodeURIComponent(hash)}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 
                 if (data.key) {
@@ -58,14 +68,35 @@
                     document.getElementById('keyDisplay').textContent = 'Error generating key. Please try again.';
                 }
             } catch (error) {
+                console.error('Error:', error);
                 document.getElementById('keyDisplay').textContent = 'Error generating key. Please try again.';
             }
         }
 
         function copyKey() {
             const keyText = document.getElementById('keyDisplay').textContent;
+            if (keyText === 'Error generating key. Please try again.' || 
+                keyText === 'Generating key...' ||
+                keyText === 'Invalid URL parameters') {
+                alert('No valid key to copy!');
+                return;
+            }
+            
             navigator.clipboard.writeText(keyText).then(() => {
                 alert('Key copied to clipboard!');
+            }).catch(() => {
+                // Fallback for browsers that don't support clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = keyText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    alert('Key copied to clipboard!');
+                } catch (err) {
+                    alert('Failed to copy key. Please copy it manually.');
+                }
+                document.body.removeChild(textArea);
             });
         }
 

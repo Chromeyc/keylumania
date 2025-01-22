@@ -9,13 +9,23 @@ module.exports = async (req, res) => {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { hash } = req.query;
+    // Get the last hash parameter if multiple are provided
+    const hashParams = Object.values(req.query);
+    const hash = hashParams[hashParams.length - 1];
     
     if (!hash) {
         return res.status(400).json({ error: 'Missing hash parameter' });
     }
 
     try {
+        // Ensure data directory exists
+        const dataDir = path.join(process.cwd(), 'data');
+        try {
+            await fs.mkdir(dataDir, { recursive: true });
+        } catch (err) {
+            // Directory might already exist, that's fine
+        }
+
         // Generate a random key
         const key = crypto.randomBytes(16).toString('hex');
         
