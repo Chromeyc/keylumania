@@ -56,10 +56,17 @@
             }
 
             try {
-                const response = await fetch(`/api/getkey?hash=${encodeURIComponent(hash)}`);
+                const response = await fetch(`/api/getkey?hash=${encodeURIComponent(hash)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                
                 const data = await response.json();
                 
                 if (data.key) {

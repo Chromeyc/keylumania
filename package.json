@@ -1,0 +1,13 @@
+{
+    "name": "lumania-key-system",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start"
+    },
+    "dependencies": {
+        "crypto": "^1.0.1"
+    }
+} 
