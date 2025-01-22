@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
 // In-memory storage for keys (will reset on server restart)
-let keys = new Map();
+const keys = new Map();
 
 // Clean expired keys every hour
 setInterval(() => {
@@ -70,4 +70,7 @@ export default async function handler(req, res) {
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
-} 
+}
+
+// Export keys Map to be used by verify endpoint
+module.exports = { keys }; 
