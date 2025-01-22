@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumania Key System - Your Key</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .key-display {
+            background: #1a1a1a;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 1.2rem;
+        }
+        
+        #copyBtn {
+            background: #00ff88;
+            color: #0f0f0f;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+        .loading {
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Lumania Key</h1>
+        <div class="key-container">
+            <p>Here's your generated key:</p>
+            <div id="keyDisplay" class="key-display">
+                <span class="loading">Generating key...</span>
+            </div>
+            <button id="copyBtn" onclick="copyKey()">Copy Key</button>
+        </div>
+    </div>
+
+    <script>
+        async function fetchKey() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const hash = urlParams.get('hash');
+            
+            try {
+                const response = await fetch(`/api/getkey?hash=${hash}`);
+                const data = await response.json();
+                
+                if (data.key) {
+                    document.getElementById('keyDisplay').textContent = data.key;
+                } else {
+                    document.getElementById('keyDisplay').textContent = 'Error generating key. Please try again.';
+                }
+            } catch (error) {
+                document.getElementById('keyDisplay').textContent = 'Error generating key. Please try again.';
+            }
+        }
+
+        function copyKey() {
+            const keyText = document.getElementById('keyDisplay').textContent;
+            navigator.clipboard.writeText(keyText).then(() => {
+                alert('Key copied to clipboard!');
+            });
+        }
+
+        // Fetch key when page loads
+        fetchKey();
+    </script>
+</body>
+</html> 

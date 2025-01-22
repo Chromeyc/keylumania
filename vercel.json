@@ -7,6 +7,7 @@
     ],
     "routes": [
         { "src": "/api/(.*)", "dest": "/api/$1" },
+        { "src": "/getkey", "dest": "/getkey.html" },
         { "src": "/(.*)", "dest": "/$1" }
     ]
 } 
